@@ -1,0 +1,17 @@
+tmp
+downloads
+release
+*.swp
+deploy
+*build/*
+!*build/rake-inc.rb
+!*build/meta
+!*build/meta/*
+!*build/conf
+!*build/conf/bblayers.conf
+!*build/conf/local.conf
+*build/conf/sanity_info
+*build/conf/priv-local.conf
+*/*.log
+*.log
+*.img
