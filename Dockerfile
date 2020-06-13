@@ -5,8 +5,8 @@ WORKDIR /app
 # ** Variables **
 
 # These environment variables must match what is in the rakefile and be mounted appropriately in the container
-ENV USERNAME=oe-user
-ENV BITBAKEDIR=/app/sources/poky/bitbake
+ENV USERNAME="oe-user"
+ENV BITBAKEDIR="/app/sources/poky/bitbake"
 
 # ** Provisioning the container **
 
