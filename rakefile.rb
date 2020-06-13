@@ -1,6 +1,7 @@
 PROJECT_NAME = "mender-demo"
 ROOT_DIRECTORY = File.expand_path(File.dirname(__FILE__))
 DOCKER_USER = "oe-user"
+DOCKER_WORKDIR = "/app/oe"
 
 def mkdir_f(dir)
     mkdir dir unless File.directory?(dir)
@@ -12,7 +13,7 @@ def docker_volume_string()
     volumes = {
         # Map the current user's SSH keys to the client user's
         "~/.ssh" => "/home/#{DOCKER_USER}/.ssh",
-        ROOT_DIRECTORY => "/app/oe"
+        ROOT_DIRECTORY => DOCKER_WORKDIR
     }
     retval = ""
     volumes.each do |host, container|
