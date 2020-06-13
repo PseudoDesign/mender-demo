@@ -24,7 +24,7 @@ end
 
 def source_build(build_name)
     # Initialize a build in the "build_name" directory via the 'source' poky command
-    run_string = "docker run --rm " + docker_volume_string + "-it #{PROJECT_NAME}-build:latest /bin/bash -c \" export BITBAKEDIR=sources/poky/bitbake; source sources/poky/oe-init-build-env #{build_name}\""
+    run_string = "docker run --rm " + docker_volume_string + "-it #{PROJECT_NAME}-build:latest /bin/bash -c \" export BITBAKEDIR=sources/poky/bitbake; source sources/poky/oe-init-build-env #{build_name}-build\""
     sh run_string
 end
 
