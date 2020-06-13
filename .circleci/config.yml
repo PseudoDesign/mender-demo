@@ -1,0 +1,12 @@
+version: 2 
+jobs: 
+ build: 
+   docker: 
+     # DLC does nothing here, its caching depends on commonality of the image layers.
+     - image: circleci/ruby:latest
+   steps: 
+     - checkout 
+     - setup_remote_docker: 
+         docker_layer_caching: true 
+     # DLC will explicitly cache layers here and try to avoid rebuilding.
+     - run: rake docker
