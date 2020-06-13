@@ -34,9 +34,18 @@ task :docker do
 end
 
 
-namespace :qemux86_64 do
-    desc "Initialize the qemu86-64-build directory (if it doesn't already exist)"
+namespace :debug do
+    DEBUG = "debug"
+    desc "Initialize the #{DEBUG}-build directory (if it doesn't already exist)"
     task :init, [:docker] do
-        source_build("qemu86-64")
+        source_build(DEBUG)
+    end
+end
+
+namespace :release do
+    RELEASE = "release"
+    desc "Initialize the #{RELEASE}-build directory (if it doesn't already exist)"
+    task :init, [:docker] do
+        source_build(RELEASE)
     end
 end
