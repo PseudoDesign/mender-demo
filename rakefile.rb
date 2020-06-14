@@ -22,10 +22,24 @@ def docker_volume_string()
     return retval
 end
 
-def source_build(build_name)
-    # Initialize a build in the "build_name" directory via the 'source' poky command
-    run_string = "docker run --rm " + docker_volume_string + "-it #{PROJECT_NAME}-build:latest /bin/bash -c \" export BITBAKEDIR=sources/poky/bitbake; source sources/poky/oe-init-build-env #{build_name}-build\""
+def docker_run_command(command)
+    # Execute the provided comlmand in the docker image, with appropriate mounting, secrets, etc
+    run_string = "docker run --rm #{docker_volume_string} -it #{PROJECT_NAME}-build:latest /bin/bash -c \" export BITBAKEDIR=sources/poky/bitbake;  #{command} \""
     sh run_string
+end
+
+def source_command(build_name)
+    # Generate the "source" command to initialize bitbake for the provided project
+    "source sources/poky/oe-init-build-env #{build_name}-build"
+end
+
+def init_build(build_name)
+    # Initialize a build in the "build_name" directory via the 'source' poky command
+    docker_run_command(source_command(build_name))
+end
+
+def do_build(build_name, machine_name)
+    docker_run_command("#{source_command(build_name)}; MACHINE=#{machine_name} bitbake core-image-minimal")
 end
 
 desc "Build the Dockerfile as #{PROJECT_NAME}-build:latest"
@@ -33,12 +47,16 @@ task :docker do
     sh "docker build -t #{PROJECT_NAME}-build:latest #{ROOT_DIRECTORY}"
 end
 
-
 namespace :debug do
     DEBUG = "debug"
     desc "Initialize the #{DEBUG}-build directory (if it doesn't already exist)"
     task :init, [:docker] do
-        source_build(DEBUG)
+        init_build(DEBUG)
+    end
+
+    desc "Build the qemux86-64 debug image"
+    task :build_qemu, [:docker] do
+        do_build(DEBUG, "qemux86-64")
     end
 end
 
@@ -46,6 +64,6 @@ namespace :release do
     RELEASE = "release"
     desc "Initialize the #{RELEASE}-build directory (if it doesn't already exist)"
     task :init, [:docker] do
-        source_build(RELEASE)
+        init_build(RELEASE)
     end
 end
