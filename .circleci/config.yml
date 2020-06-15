@@ -27,6 +27,6 @@ workflows:
   debug-qemu-build:
     jobs:
       - docker_image_build
-      - debug_qemu_build
-        requires:
-          - docker_image_build
+      - debug_qemu_build:
+          requires:
+            - docker_image_build
