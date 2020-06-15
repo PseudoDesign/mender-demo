@@ -38,8 +38,8 @@ def init_build(build_name)
     docker_run_command(source_command(build_name))
 end
 
-def do_build(build_name, machine_name)
-    docker_run_command("#{source_command(build_name)}; MACHINE=#{machine_name} bitbake core-image-minimal")
+def do_build(build_name, machine_name, bitbake_command)
+    docker_run_command("#{source_command(build_name)}; MACHINE=#{machine_name} bitbake #{bitbake_command}")
 end
 
 desc "Build the Dockerfile as #{PROJECT_NAME}-build:latest"
@@ -50,13 +50,18 @@ end
 namespace :debug do
     DEBUG = "debug"
     desc "Initialize the #{DEBUG}-build directory (if it doesn't already exist)"
-    task :init, [:docker] do
+    task :init => [:docker] do
         init_build(DEBUG)
     end
 
     desc "Build the qemux86-64 debug image"
-    task :build_qemu, [:docker] do
-        do_build(DEBUG, "qemux86-64")
+    task :build_qemu => [:docker] do
+        do_build(DEBUG, "qemux86-64", "core-image-minimal")
+    end
+
+    desc "Run bitbake 'bitbake_command' targeting 'machine'"
+    task :bitbake, [:cmd, :machine] => [:docker] do |t, args|
+        do_build(DEBUG, args[:machine], args[:cmd])
     end
 end
 
