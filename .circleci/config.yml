@@ -16,7 +16,7 @@ jobs:
           name: Push Docker Image
           command: |
             source env.txt
-            docker image tag "$DOCKER_IMAGE_NAME" "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_JOB}-circleci:${CIRCLE_BUILD_NUM}""
+            docker image tag "$DOCKER_IMAGE_NAME" "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_JOB}-circleci:${CIRCLE_BUILD_NUM}"
             docker push "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_JOB}-circleci:${CIRCLE_BUILD_NUM}"
   debug_qemu_build: 
     docker: 
