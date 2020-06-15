@@ -6,9 +6,6 @@ jobs:
     steps: 
       - checkout 
       - run:
-          name: Setup Environment Variables
-          command: source env.txt
-      - run:
           name: Log in to Docker Hub
           command: |
             echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
@@ -18,8 +15,9 @@ jobs:
       - run:
           name: Push Docker Image
           command: |
-            docker image tag $DOCKER_IMAGE_NAME ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_JOB}-circleci:${CIRCLE_BUILD_NUM}
-            docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_JOB}-circleci:${CIRCLE_BUILD_NUM}
+            source env.txt
+            docker image tag "$DOCKER_IMAGE_NAME" "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_JOB}-circleci:${CIRCLE_BUILD_NUM}""
+            docker push "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_JOB}-circleci:${CIRCLE_BUILD_NUM}"
   debug_qemu_build: 
     docker: 
       - image: ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_JOB}-circleci:${CIRCLE_BUILD_NUM}
