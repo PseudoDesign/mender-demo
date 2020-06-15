@@ -1,9 +1,7 @@
 version: 2 
 jobs: 
   docker_image_build: 
-    docker: 
-      # DLC does nothing here, its caching depends on commonality of the image layers.
-      - image: circleci/ruby:latest
+    machine: true
     steps: 
       - checkout 
       - setup_remote_docker: 
@@ -11,9 +9,7 @@ jobs:
       # DLC will explicitly cache layers here and try to avoid rebuilding.
       - run: rake docker
   debug_qemu_build: 
-    docker: 
-      # DLC does nothing here, its caching depends on commonality of the image layers.
-      - image: circleci/ruby:latest
+    machine: true
     resource_class: xlarge
     steps: 
       - checkout 
