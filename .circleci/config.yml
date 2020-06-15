@@ -14,6 +14,7 @@ debug_qemu_build:
   docker: 
     # DLC does nothing here, its caching depends on commonality of the image layers.
     - image: circleci/ruby:latest
+  resource_class: xlarge
   steps: 
     - checkout 
     - setup_remote_docker: 
