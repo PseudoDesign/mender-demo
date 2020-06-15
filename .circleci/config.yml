@@ -1,17 +1,31 @@
 version: 2 
 jobs: 
-  debug_qemu_build: 
-    machine: 
+  docker_image_build: 
+    machine:
       docker_layer_caching: true
+    steps: 
+      - checkout 
+      - run: 
+        name: Build Docker Image
+        command: rake docker
+  debug_qemu_build: 
+    docker: 
+      - image: ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_JOB}-circleci:${CIRCLE_BUILD_NUM}
     resource_class: xlarge
     steps: 
       - checkout 
-      - run: git submodule update --init --recursive
-      # DLC will explicitly cache layers here and try to avoid rebuilding.
-      - run: rake debug:build_qemu
+      - run:
+        name: Checkout Submodules
+        command: git submodule update --init --recursive
+      - run: 
+        name: Build core-image-minimal for qemux86-64
+        command: export BITBAKEDIR=sources/poky/bitbake;  MACHINE=qemux86-64 bitbake core-image-minimal
 
 workflows:
   version: 2
   debug-qemu-build:
     jobs:
-      - debug_qemu_build
+      - docker_image_build
+      - debug_qemu_build:
+          requires:
+            - docker_image_build
