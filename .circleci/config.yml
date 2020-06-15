@@ -29,7 +29,10 @@ jobs:
           command: git submodule update --init --recursive
       - run: 
           name: Build core-image-minimal for qemux86-64
-          command: export BITBAKEDIR=sources/poky/bitbake;  MACHINE=qemux86-64 bitbake core-image-minimal
+          command: |
+            export BITBAKEDIR=sources/poky/bitbake
+            source sources/poky/oe-init-build-env debug-build
+            MACHINE=qemux86-64 bitbake core-image-minimal
 
 workflows:
   version: 2
