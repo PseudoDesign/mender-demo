@@ -24,8 +24,8 @@ end
 
 def docker_run_command(command)
     # Execute the provided comlmand in the docker image, with appropriate mounting, secrets, etc
-    uid = `id -u`.delete!("\n")
-    run_string = "docker run --rm #{docker_volume_string} -it #{PROJECT_NAME}-build:latest /bin/bash -c \"usermod -u #{uid} #{DOCKER_USER} ; export BITBAKEDIR=sources/poky/bitbake;  #{command} \""
+    uid = `id -u`
+    run_string = "docker run --rm #{docker_volume_string} -it #{PROJECT_NAME}-build:latest /bin/bash -c \"sudo usermod -u #{uid} #{DOCKER_USER} ; export BITBAKEDIR=sources/poky/bitbake;  #{command} \""
     sh run_string
 end
 
