@@ -1,6 +1,6 @@
 version: 2 
 jobs: 
-  docker-image-build:
+  docker_image_build:
     docker: 
       # DLC does nothing here, its caching depends on commonality of the image layers.
       - image: circleci/ruby:latest
@@ -10,8 +10,7 @@ jobs:
         docker_layer_caching: true 
       # DLC will explicitly cache layers here and try to avoid rebuilding.
       - run: rake docker
-
-  debug-build: 
+  debug_build: 
      docker: 
         # DLC does nothing here, its caching depends on commonality of the image layers.
         - image: circleci/ruby:latest
@@ -24,7 +23,7 @@ jobs:
 
 workflows:
   version: 2
-  debug-qemu-build:
+  debug_qemu_build:
     jobs:
-      - docker-image-build
-      - debug-build
+      - docker_image_build
+      - debug_build
