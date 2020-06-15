@@ -20,10 +20,8 @@ jobs:
         docker_layer_caching: true 
       # DLC will explicitly cache layers here and try to avoid rebuilding.
       - run: rake debug:build_qemu
-     
+  
 workflows:
-  pseudo-oe:
+  mender-demo:
     jobs:
       - debug-qemu-build
-        requires:
-          - docker-image-build
