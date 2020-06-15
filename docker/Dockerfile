@@ -16,9 +16,9 @@ RUN apt-get install -y apt-utils
 # Libcrypto magic?
 #RUN cd /usr/lib; ln -s libcrypto++.so.9.0.0 libcryptopp.so.6
 
-# Copy docker_packages.txt into the container
+# Copy packages.txt into the container
 
-ADD docker_packages.txt /app
+ADD packages.txt /app
 
 # Create the non-root user
 RUN useradd $USERNAME
@@ -35,11 +35,11 @@ RUN chown $USERNAME:$USERNAME /home/$USERNAME -R
 # Replace bash as /bin/sh
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
-# Update the package listing and install the packages in docker_packages.txt
+# Update the package listing and install the packages in packages.txt
 RUN dpkg --add-architecture i386
 RUN apt-get update
 RUN apt-get install -y locales
-RUN apt-get install -y $(grep -vE "^\s*#" /app/docker_packages.txt  | tr "\n" " ")
+RUN apt-get install -y $(grep -vE "^\s*#" /app/packages.txt  | tr "\n" " ")
 
 # Language options
 
