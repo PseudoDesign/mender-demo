@@ -1,4 +1,5 @@
-version: 2 
+version: 2
+
 jobs: 
   docker-image-build:
     docker: 
@@ -22,6 +23,7 @@ jobs:
       - run: rake debug:build_qemu
   
 workflows:
+  version: 2
   mender-demo:
     jobs:
       - debug-qemu-build
