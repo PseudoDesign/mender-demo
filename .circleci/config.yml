@@ -16,11 +16,11 @@ jobs:
           name: Push Docker Image
           command: |
             source env.txt
-            docker image tag "$DOCKER_IMAGE_NAME" "pseudodesign/${CIRCLE_JOB}-circleci:${CIRCLE_BUILD_NUM}"
-            docker push "pseudodesign/${CIRCLE_JOB}-circleci:${CIRCLE_BUILD_NUM}"
+            docker image tag "$DOCKER_IMAGE_NAME" "pseudodesign/mender-demo-circleci:${CIRCLE_BUILD_NUM}"
+            docker push "pseudodesign/mender-demo-circleci:${CIRCLE_BUILD_NUM}"
   debug_qemu_build: 
     docker: 
-      - image: pseudodesign/${CIRCLE_JOB}-circleci:${CIRCLE_BUILD_NUM}
+      - image: pseudodesign/mender-demo-circleci:${CIRCLE_BUILD_NUM}
     resource_class: xlarge
     steps: 
       - checkout 
