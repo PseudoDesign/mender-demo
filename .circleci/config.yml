@@ -6,20 +6,20 @@ jobs:
     steps: 
       - checkout 
       - run:
-        name: Setup Environment Variables
-        command: source env.txt
+          name: Setup Environment Variables
+          command: source env.txt
       - run:
-        name: Log in to Docker Hub
-        command: |
-          echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
+          name: Log in to Docker Hub
+          command: |
+            echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
       - run: 
-        name: Build Docker Image
-        command: rake docker
+          name: Build Docker Image
+          command: rake docker
       - run:
-        name: Push Docker Image
-        command: |
-          docker image tag $DOCKER_IMAGE_NAME ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_JOB}-circleci:${CIRCLE_BUILD_NUM}
-          docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_JOB}-circleci:${CIRCLE_BUILD_NUM}
+          name: Push Docker Image
+          command: |
+            docker image tag $DOCKER_IMAGE_NAME ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_JOB}-circleci:${CIRCLE_BUILD_NUM}
+            docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_JOB}-circleci:${CIRCLE_BUILD_NUM}
   debug_qemu_build: 
     docker: 
       - image: ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_JOB}-circleci:${CIRCLE_BUILD_NUM}
@@ -27,11 +27,11 @@ jobs:
     steps: 
       - checkout 
       - run:
-        name: Checkout Submodules
-        command: git submodule update --init --recursive
+          name: Checkout Submodules
+          command: git submodule update --init --recursive
       - run: 
-        name: Build core-image-minimal for qemux86-64
-        command: export BITBAKEDIR=sources/poky/bitbake;  MACHINE=qemux86-64 bitbake core-image-minimal
+          name: Build core-image-minimal for qemux86-64
+          command: export BITBAKEDIR=sources/poky/bitbake;  MACHINE=qemux86-64 bitbake core-image-minimal
 
 workflows:
   version: 2
