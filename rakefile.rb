@@ -49,7 +49,7 @@ end
 
 desc "Run a shell in the Docker container at #{PROJECT_NAME}-build:latest with the appropriate project volumes mounted"
 task :run_docker_shell => [:docker] do
-    sh docker_run_command("/bin/bash")
+    docker_run_command("/bin/bash")
 end
 
 namespace :debug do
@@ -62,6 +62,11 @@ namespace :debug do
     desc "Build the qemux86-64 debug image"
     task :build_qemu => [:docker] do
         do_build(DEBUG, "qemux86-64", "core-image-minimal")
+    end
+
+    desc "Run the qemux86-64 debug image"
+    task :run_qemu => [:docker] do
+        docker_run_command("#{source_command("debug")}; MACHINE=qemux86-64 ../sources/meta-mender/meta-mender-qemu/scripts/mender-qemu core-image-minimal")
     end
 
     desc "Run bitbake 'bitbake_command' targeting 'machine'"
