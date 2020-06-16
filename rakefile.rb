@@ -47,6 +47,11 @@ task :docker do
     sh "docker build -t #{PROJECT_NAME}-build:latest #{ROOT_DIRECTORY}/docker"
 end
 
+desc "Run a shell in the Docker container at #{PROJECT_NAME}-build:latest with the appropriate project volumes mounted"
+task :run_docker_shell => [:docker] do
+    sh docker_run_command("/bin/bash")
+end
+
 namespace :debug do
     DEBUG = "debug"
     desc "Initialize the #{DEBUG}-build directory (if it doesn't already exist)"
