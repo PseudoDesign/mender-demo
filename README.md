@@ -7,3 +7,13 @@ Requires the following CircleCI environment variables:
 
 * DOCKER_USER - docker hub username
 * DOCKER_PASS - docker hub password
+
+See `.circleci/config.yml` for build details
+
+## Build Locally
+
+The local build, including the build docker image, is managed by `rakefile.rb`
+
+Run `rake -T` for details.
+
+
