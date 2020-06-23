@@ -21,7 +21,7 @@ jobs:
   debug_qemu_build: 
     docker: 
       - image: pseudodesign/mender-demo-circleci:<< pipeline.number >>
-    resource_class: 2xlarge
+    resource_class: xlarge
     steps: 
       - checkout 
       - run:
