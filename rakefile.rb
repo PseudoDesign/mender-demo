@@ -54,19 +54,20 @@ end
 
 namespace :debug do
     DEBUG = "debug"
+    DEBUG_MACHINE = "qemux86-64"
     desc "Initialize the #{DEBUG}-build directory (if it doesn't already exist)"
     task :init => [:docker] do
         init_build(DEBUG)
     end
 
-    desc "Build the qemux86-64 debug image"
+    desc "Build the #{DEBUG_MACHINE} debug image"
     task :build_qemu => [:docker] do
-        do_build(DEBUG, "qemux86-64", "core-image-minimal")
+        do_build(DEBUG, "#{DEBUG_MACHINE}", "core-image-minimal")
     end
 
-    desc "Run the qemux86-64 debug image"
+    desc "Run the #{DEBUG_MACHINE} debug image"
     task :run_qemu => [:docker] do
-        docker_run_command("#{source_command("debug")}; MACHINE=qemux86-64 ../sources/meta-mender/meta-mender-qemu/scripts/mender-qemu core-image-minimal")
+        docker_run_command("#{source_command("debug")}; MACHINE=#{DEBUG_MACHINE} ../sources/meta-mender/meta-mender-qemu/scripts/mender-qemu core-image-minimal")
     end
 
     desc "Run bitbake 'bitbake_command' targeting 'machine'"
