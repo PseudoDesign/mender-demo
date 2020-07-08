@@ -41,10 +41,12 @@ workflows:
       - docker_image_build
           filters:
             branches:
-              only: master
+              only: 
+                - master
       - debug_qemu_build:
           requires:
             - docker_image_build
           filters:
             branches:
-              only: master
+              only: 
+                - master
