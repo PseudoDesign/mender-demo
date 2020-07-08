@@ -110,9 +110,16 @@ After logging in to the Mender Server and QEMU box, the Mender Client QEMU box w
 
 Navigate to `Devices -> Pending`.  The QEMU device will be available; click it and "Accept" it.
 
-![Accept mender device](img/accept-mender-device.gif)
+![Accept Mender client device](img/accept-mender-device.gif)
 
-The device, along with extended details, is now available on the `Devices -> Device Groups` tab.  Note that the name of the 
+The device, along with extended details, is now available on the `Devices -> Device Groups` tab.  Note that the name of the current software is "release-1", matching the name provided in the `local.conf` file.
+
+![Authorized client device](img/authorized-client-device.png)
+
+### Upload New Software to Mender Server
+
+Navigate to the `Releases` tab.  Upload the `mender-demo-qemu-release-2.mender` file created earlier.
+
+![Upload Release 2](img/upload-release-2.gif)
 
 ### Deploy New Software
-
