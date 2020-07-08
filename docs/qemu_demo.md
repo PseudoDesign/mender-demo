@@ -6,7 +6,7 @@ TODO: DESCRIBE DUALROOTFS UPDATES HERE
 
 ## Setup
 
-For this tutorial, we're going to use version 2.4 of [Mender](https://docs.mender.io/2.4).  When deploying this to a real product, you will need to select a version of Mender that's right for your project.  Generally speaking, this should be the latest version with support targeting your project's version of [Yocto](https://wiki.yoctoproject.org/wiki/Releases).
+This tutorial will use version 2.4 of [Mender](https://docs.mender.io/2.4).  When deploying this to a real product, you will need to select a version of Mender that's right for your project.  Generally speaking, this should be the latest version with support targeting your project's version of [Yocto](https://wiki.yoctoproject.org/wiki/Releases).
 
 ### Mender Server
 
@@ -20,7 +20,7 @@ git clone -b 2.4.0b1 https://github.com/mendersoftware/integration.git integrati
 cd integration-2.4.0b1
 ```
 
-By default, the server runs on the `localhost` interface; we'll need to run it on a physical interface that's available to the QEMU instance.  Open the `demo` file, locate the `MENDER_SERVER_URI` variable, and change it to `https://**YOUR_IP_ADDRESS**`, e.g. `MENDER_SERVER_URI=10.0.0.105`.
+By default, the server runs on the `localhost` interface; however, `localhost` is not visible to the QEMU instance.  This requires routing the server to a physical interface address.  Open the `demo` file, locate the `MENDER_SERVER_URI` variable, and change it to `https://**YOUR_IP_ADDRESS**`, e.g. `MENDER_SERVER_URI=10.0.0.105`.
 
 Start the demo by executing `./demo up`.  As the docker stack boots, a username and password will be printed to the screen.  Copy this for later, as you will use this to log in to your Mender server.
 
@@ -34,16 +34,16 @@ Now that the server is running, navigate to `https://**YOUR_IP_ADDRESS**`, ignor
 
 The full project is located on [Github](https://github.com/PseudoDesign/mender-demo).  The project is based on my go-to implementation of Dockerized OpenEmbedded builds.  See the `README.md` file for more details, or just run `rake -T` to see what you can do with it.
 
-For the sake of this demo, we're going to run Mender in a [QEMU](https://www.qemu.org/) environment.  This will allow us to demonstrate the capabilities of Mender without having to deal with any physical hardware.  
+This demo will run Mender in a [QEMU](https://www.qemu.org/) environment.  This will allow demonstration of Mender capabilities without having to deal with any physical hardware.  
 
 This demo is targeting Yocto Warrior using a qemux86-64 machine.
 
-Given the limited needs of this project, we won't need many OpenEmbedded meta layers.  They've been added as git submodules in the `.../sources` directory; you can find details on the layers in the links below.
+Given the limited needs of this project, it does not necessitate many OpenEmbedded meta layers.  They've been added as git submodules in the `.../sources` directory; you can find details on the layers in the links below.
 
 * [Yocto Poky](https://www.yoctoproject.org/software-item/poky/)
 * [meta-mender](https://github.com/mendersoftware/meta-mender/tree/warrior)
 
-To set up the OpenEmbedded build, we need to import the meta layers into bitbake.  This is handled in `.../debug-build/conf/bblayers.conf`:
+To set up the OpenEmbedded build, import the meta layers into bitbake.  This is handled in `.../debug-build/conf/bblayers.conf`:
 
 ```bash
 # POKY_BBLAYERS_CONF_VERSION is increased each time build/conf/bblayers.conf
@@ -63,15 +63,15 @@ BBLAYERS ?= " \
 "
 ```
 
-Likewise, we'll need a build configuration.  Yocto generates a default file at `.../debug-build/conf/local.conf`, but we'll need to add a few Mender-specific options.
+Likewise, a build configuration is required.  Yocto generates a default file at `.../debug-build/conf/local.conf`, but we need to add a few Mender-specific options.
 
-For starters, we'll need to notify the build system that we're using mender:
+For starters, the build system needs to inherit the Mender classes:
 
 ```bash
 INHERIT += "mender-full"
 ```
 
-Since Mender utilizes systemd, we need to configure our build to replace sysvinit with systemd:
+Since Mender utilizes systemd, the build will replace sysvinit with systemd:
 
 ```bash
 DISTRO_FEATURES_append = " systemd"
@@ -80,13 +80,13 @@ DISTRO_FEATURES_BACKFILL_CONSIDERED = "sysvinit"
 VIRTUAL-RUNTIME_initscripts = ""
 ```
 
-Mender tracks software via a unique artifact name.  This will likely be tied to your version of software, but for the sake of this demo we'll use the names "release-1" and "release-2".  Set it to "release-2 for now, since we're going to build the update image first.
+Mender tracks software via a unique artifact name.  This will likely be tied to your version of software, but for the sake of this demo we'll use the names "release-1" and "release-2".  Set it to "release-2" for now to build the update image first.
 
 ```bash
 MENDER_ARTIFACT_NAME = "release-2"
 ```
 
-Finally, we need to provide the IP address of the Mender demo server we set up earlier:
+Finally, provide the IP address of the Mender demo server (see Setup - Mender Server above):
 
 ```bash
 MENDER_DEMO_HOST_IP_ADDRESS = "10.0.0.105"
@@ -104,7 +104,11 @@ Once the build is done, boot the QEMU machine by executing `rake debug:run_qemu`
 
 ## Executing a Software Update
 
+After logging in to the Mender Server and QEMU box, the Mender Client QEMU box will periodically ping the Mender Demo Server.  You can check the Mender Client logs by executing `journalctl -u mender -r` in the QEMU box.  Firewall issues can result in pinging and/or downloads not working; be sure to verify that ports 443 and 9000 are open on the server host OS.
+
 ### Add Client Device to Mender Server
+
+
 
 ### Deploy New Software
 
