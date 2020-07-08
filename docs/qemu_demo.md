@@ -1,14 +1,38 @@
 # Yocto BSP Firmware Updates Using Mender
 
+TODO: Describe use case
+
+TODO: DESCRIBE DUALROOTFS UPDATES HERE
+
 ## Setup
 
 For this tutorial, we're going to use version 2.4 of [Mender](https://docs.mender.io/2.4).  When deploying this to a real product, you will need to select a version of Mender that's right for your project.  Generally speaking, this should be the latest version with support targeting your project's version of [Yocto](https://wiki.yoctoproject.org/wiki/Releases).
 
 ### Mender Server
 
+Mender provides a [Demo Server](https://docs.mender.io/2.4/getting-started/on-premise-installation/create-a-test-environment) for easy use in non-production environments.  Be sure to open the required ports 443 and 9000 on your firewall if your machine uses one.
+For additional details on using the server, see the documentation.
+
+Start by cloning the demo server repository and changing to that directory:
+
+```bash
+git clone -b 2.4.0b1 https://github.com/mendersoftware/integration.git integration-2.4.0b1
+cd integration-2.4.0b1
+```
+
+By default, the server runs on the `localhost` interface; we'll need to run it on a physical interface that's available to the QEMU instance.  Open the `demo` file, locate the `MENDER_SERVER_URI` variable, and change it to `https://**YOUR_IP_ADDRESS**`, e.g. `MENDER_SERVER_URI=10.0.0.105`.
+
+Start the demo by executing `./demo up`.  As the docker stack boots, a username and password will be printed to the screen.  Copy this for later, as you will use this to log in to your Mender server.
+
+![Mender server startup](img/mender-server-startup.png)
+
+Now that the server is running, navigate to `https://**YOUR_IP_ADDRESS**`, ignore the invalid certificate warning, and log in to the Mender server. 
+
+![Mender server login](img/mender-server-login.png)
+
 ### Mender Client
 
-The full project is located on [Github](https://github.com/PseudoDesign/mender-demo).  The project is based on my go-to implementation of Dockerize OpenEmbedded builds
+The full project is located on [Github](https://github.com/PseudoDesign/mender-demo).  The project is based on my go-to implementation of Dockerized OpenEmbedded builds.  See the `README.md` file for more details, or just run `rake -T` to see what you can do with it.
 
 For the sake of this demo, we're going to run Mender in a [QEMU](https://www.qemu.org/) environment.  This will allow us to demonstrate the capabilities of Mender without having to deal with any physical hardware.  
 
@@ -18,4 +42,69 @@ Given the limited needs of this project, we won't need many OpenEmbedded meta la
 
 * [Yocto Poky](https://www.yoctoproject.org/software-item/poky/)
 * [meta-mender](https://github.com/mendersoftware/meta-mender/tree/warrior)
+
+To set up the OpenEmbedded build, we need to import the meta layers into bitbake.  This is handled in `.../debug-build/conf/bblayers.conf`:
+
+```bash
+# POKY_BBLAYERS_CONF_VERSION is increased each time build/conf/bblayers.conf
+# changes incompatibly
+POKY_BBLAYERS_CONF_VERSION = "2"
+
+BBPATH = "${TOPDIR}"
+BBFILES ?= ""
+
+BBLAYERS ?= " \
+  ${TOPDIR}/../sources/poky/meta \
+  ${TOPDIR}/../sources/poky/meta-poky \
+  ${TOPDIR}/../sources/poky/meta-yocto-bsp \
+  ${TOPDIR}/../sources/meta-mender/meta-mender-core \
+  ${TOPDIR}/../sources/meta-mender/meta-mender-demo \
+  ${TOPDIR}/../sources/meta-mender/meta-mender-qemu \
+"
+```
+
+Likewise, we'll need a build configuration.  Yocto generates a default file at `.../debug-build/conf/local.conf`, but we'll need to add a few Mender-specific options.
+
+For starters, we'll need to notify the build system that we're using mender:
+
+```bash
+INHERIT += "mender-full"
+```
+
+Since Mender utilizes systemd, we need to configure our build to replace sysvinit with systemd:
+
+```bash
+DISTRO_FEATURES_append = " systemd"
+VIRTUAL-RUNTIME_init_manager = "systemd"
+DISTRO_FEATURES_BACKFILL_CONSIDERED = "sysvinit"
+VIRTUAL-RUNTIME_initscripts = ""
+```
+
+Mender tracks software via a unique artifact name.  This will likely be tied to your version of software, but for the sake of this demo we'll use the names "release-1" and "release-2".  Set it to "release-2 for now, since we're going to build the update image first.
+
+```bash
+MENDER_ARTIFACT_NAME = "release-2"
+```
+
+Finally, we need to provide the IP address of the Mender demo server we set up earlier:
+
+```bash
+MENDER_DEMO_HOST_IP_ADDRESS = "10.0.0.105"
+```
+
+Now that everything is set up, kick off a build by running `rake debug:build_qemu`.  This will take some time, even on a powerful machine, as Yocto builds toolchains and all software components from scratch.
+
+Once the build is complete, grab the `.mender` file used to deploy the software update.  This is located at `.../debug-build/tmp/deploy/images/qemux86-64/core-image-minimal-qemux86-64-*TIMESTAMP*.mender`.  Copy this file somewhere easily accessible, e.g. `cp .../debug-build/tmp/deploy/images/qemux86-64/core-image-minimal-qemux86-64-*.mender ~/mender-demo-qemu-release-2.mender`.
+
+With the update image in hand, change the `MENDER_ARTIFACT_NAME` back to "release-1" and re-build the project by executing `rake debug:build_qemu`.  Thankfully, this will only take a few minutes to poke the release name into the rootfs and re-generate the release binaries, rather than rebuild everything from scratch.
+
+Once the build is done, boot the QEMU machine by executing `rake debug:run_qemu`.  This utilizes scripts provided by Mender for provisioning the virtual filesystems correctly.  You can log in as `root` without a password.
+
+![Mender demo qemu login](img/mender-demo-qemu-login.png)
+
+## Executing a Software Update
+
+### Add Client Device to Mender Server
+
+### Deploy New Software
 
