@@ -38,7 +38,7 @@ workflows:
   version: 2
   debug-qemu-build:
     jobs:
-      - docker_image_build
+      - docker_image_build:
           filters:
             branches:
               only: 
