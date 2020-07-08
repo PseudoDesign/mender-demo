@@ -108,7 +108,11 @@ After logging in to the Mender Server and QEMU box, the Mender Client QEMU box w
 
 ### Add Client Device to Mender Server
 
+Navigate to `Devices -> Pending`.  The QEMU device will be available; click it and "Accept" it.
 
+![Accept mender device](img/accept-mender-device.gif)
+
+The device, along with extended details, is now available on the `Devices -> Device Groups` tab.  Note that the name of the 
 
 ### Deploy New Software
 
