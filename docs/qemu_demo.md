@@ -1,8 +1,10 @@
 # Yocto BSP Firmware Updates Using Mender
 
-TODO: Describe use case
+Firmware updates on barebones Linux distributions have always been cumbersome.  SOC manufacturers often roll their own uboot scripts that vary from platform to platform, rolling ones own software update package is time consuming, and you're out of luck if you want cloud updates.
 
-TODO: DESCRIBE DUALROOTFS UPDATES HERE
+Arriving to fill this gap, [Mender](https://mender.io) is a Yocto-compatible software package that provides a robust firmware update solution that is scalable from single developer, multi-developer, to cloud-deployable use cases.  It is open-source software with community support for several common embedded Linux [boards](https://hub.mender.io/c/board-integrations/6), and is customizable enough to add support to any project built in Yocto.
+
+To demonstrate the out-of-the-box capabilities of Mender, I've put together a demo running a host on a local PC and an emulated client running in a QEMU VM.
 
 ## Setup
 
@@ -123,3 +125,26 @@ Navigate to the `Releases` tab.  Upload the `mender-demo-qemu-release-2.mender` 
 ![Upload Release 2](img/upload-release-2.gif)
 
 ### Deploy New Software
+
+Navigate to the `Deployments` tab.  Select `Create a Deployment`, and choose to deploy `release-2` to `All devices`.
+
+![Create a Deployment](img/create-a-deployment.png)
+
+This will start the deployment process.  Taking a look at the deployment details screen, we can see the download to the device has started.
+
+![Downloading](img/deployment-details.png)
+
+Once the download is complete, the Mender server will reboot the client device to finalize the installation.
+
+![Rebooting Device](img/rebooting.png)
+
+This reboot occurs automatically on the client device:
+
+![Client Reboot](img/update-reboot.gif)
+
+Once the update is successfully installed, the deployment on the Mender server will indicate such.
+
+![Update Complete](img/deployment-success.png)
+
+And we're done; embedded Linux software updates have never been easier!  With existing Mender demos, showing off this functionality on a Raspberry Pi or iMX6-based platform should be just as easy as bringing up this demo.
+

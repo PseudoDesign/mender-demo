@@ -16,4 +16,6 @@ The local build, including the build docker image, is managed by `rakefile.rb`
 
 Run `rake -T` for details.
 
+## Documentation
 
+[Quickstart QEMU Demo](docs/qemu_demo.md)
