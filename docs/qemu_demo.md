@@ -146,5 +146,9 @@ Once the update is successfully installed, the deployment on the Mender server w
 
 ![Update Complete](img/deployment-success.png)
 
+Returning to the `Devices` screen, we can see that our device has been update to "release-2".
+
+![Device with Release 2](img/device-with-release-2.png)
+
 And we're done; embedded Linux software updates have never been easier!  With existing Mender demos, showing off this functionality on a Raspberry Pi or iMX6-based platform should be just as easy as bringing up this demo.
 
