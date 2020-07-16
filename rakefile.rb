@@ -54,20 +54,21 @@ end
 
 namespace :debug do
     DEBUG = "debug"
-    DEBUG_MACHINE = "qemux86-64"
+    QEMU_MACHINE = "qemux86-64"
+    
     desc "Initialize the #{DEBUG}-build directory (if it doesn't already exist)"
     task :init => [:docker] do
         init_build(DEBUG)
     end
 
-    desc "Build the #{DEBUG_MACHINE} debug image"
+    desc "Build the #{QEMU_MACHINE} debug image"
     task :build_qemu => [:docker] do
-        do_build(DEBUG, "#{DEBUG_MACHINE}", "core-image-minimal")
+        do_build(DEBUG, "#{QEMU_MACHINE}", "core-image-minimal")
     end
 
-    desc "Run the #{DEBUG_MACHINE} debug image"
+    desc "Run the #{QEMU_MACHINE} debug image"
     task :run_qemu => [:docker] do
-        docker_run_command("#{source_command("debug")}; MACHINE=#{DEBUG_MACHINE} ../sources/meta-mender/meta-mender-qemu/scripts/mender-qemu core-image-minimal")
+        docker_run_command("#{source_command("debug")}; MACHINE=#{QEMU_MACHINE} ../sources/meta-mender/meta-mender-qemu/scripts/mender-qemu core-image-minimal")
     end
 
     desc "Run bitbake 'bitbake_command' targeting 'machine'"
@@ -76,10 +77,17 @@ namespace :debug do
     end
 end
 
-namespace :release do
-    RELEASE = "release"
-    desc "Initialize the #{RELEASE}-build directory (if it doesn't already exist)"
+namespace :rpi do
+    RPI = "rpi"
+    RPI4_MACHINE = "raspberrypi4-64"
+
+    desc "Initialize the #{RPI}-build directory (if it doesn't already exist)"
     task :init, [:docker] do
         init_build(RELEASE)
+    end
+
+    desc "Build the #{RPI4_MACHINE} debug image"
+    task :build_rpi4 => [:docker] do
+        do_build(DEBUG, "#{RPI4_MACHINE}", "core-image-base")
     end
 end
