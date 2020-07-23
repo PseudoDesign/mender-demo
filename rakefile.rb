@@ -55,7 +55,7 @@ end
 namespace :debug do
     DEBUG = "debug"
     QEMU_MACHINE = "qemux86-64"
-    
+
     desc "Initialize the #{DEBUG}-build directory (if it doesn't already exist)"
     task :init => [:docker] do
         init_build(DEBUG)
@@ -82,12 +82,17 @@ namespace :rpi do
     RPI4_MACHINE = "raspberrypi4-64"
 
     desc "Initialize the #{RPI}-build directory (if it doesn't already exist)"
-    task :init, [:docker] do
-        init_build(RELEASE)
+    task :init => [:docker] do
+        init_build(RPI)
     end
 
     desc "Build the #{RPI4_MACHINE} debug image"
     task :build_rpi4 => [:docker] do
-        do_build(DEBUG, "#{RPI4_MACHINE}", "core-image-base")
+        do_build(RPI, "#{RPI4_MACHINE}", "core-image-base")
+    end
+
+    desc "Cleans the #{RPI4_MACHINE} debug image"
+    task :clean_rpi4 => [:docker] do
+        do_build(RPI, "#{RPI4_MACHINE}", "-c cleanall core-image-base")
     end
 end
