@@ -39,7 +39,10 @@ def init_build(build_name)
 end
 
 def do_build(build_name, machine_name, bitbake_command)
-    docker_run_command("#{source_command(build_name)}; MACHINE=#{machine_name} bitbake #{bitbake_command}")
+    # Use a secondary "priv-local" file for variables not checked in to the repo
+    priv_local_file = "#{build_name}-build/conf/priv-local.conf"
+    `touch "#{priv_local_file}"`
+    docker_run_command("#{source_command(build_name)}; MACHINE=#{machine_name} bitbake --postread='/app/oe/#{priv_local_file}' #{bitbake_command}")
 end
 
 desc "Build the Dockerfile as #{PROJECT_NAME}-build:latest"
