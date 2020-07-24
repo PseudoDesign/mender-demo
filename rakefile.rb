@@ -91,11 +91,11 @@ namespace :rpi do
 
     desc "Build the #{RPI4_MACHINE} debug image"
     task :build_rpi4 => [:docker] do
-        do_build(RPI, "#{RPI4_MACHINE}", "core-image-base")
+        do_build(RPI, "#{RPI4_MACHINE}", "core-image-minimal")
     end
 
     desc "Cleans the #{RPI4_MACHINE} debug image"
     task :clean_rpi4 => [:docker] do
-        do_build(RPI, "#{RPI4_MACHINE}", "-c cleanall core-image-base")
+        do_build(RPI, "#{RPI4_MACHINE}", "-c cleanall core-image-minimal")
     end
 end
