@@ -83,19 +83,20 @@ end
 namespace :rpi do
     RPI = "rpi"
     RPI4_MACHINE = "raspberrypi4-64"
+    RPI_DEV_IMAGE = "pseudodesign-dev-image"
 
     desc "Initialize the #{RPI}-build directory (if it doesn't already exist)"
     task :init => [:docker] do
         init_build(RPI)
     end
 
-    desc "Build the #{RPI4_MACHINE} debug image"
-    task :build_rpi4 => [:docker] do
-        do_build(RPI, "#{RPI4_MACHINE}", "core-image-minimal")
+    desc "Build the #{RPI4_MACHINE} debug image: #{RPI_DEV_IMAGE}"
+    task :build_rpi4_dev => [:docker] do
+        do_build(RPI, "#{RPI4_MACHINE}", RPI_DEV_IMAGE)
     end
 
-    desc "Cleans the #{RPI4_MACHINE} debug image"
-    task :clean_rpi4 => [:docker] do
-        do_build(RPI, "#{RPI4_MACHINE}", "-c cleanall core-image-minimal")
+    desc "Cleans the #{RPI4_MACHINE} debug image: #{RPI_DEV_IMAGE}"
+    task :clean_rpi4_dev => [:docker] do
+        do_build(RPI, "#{RPI4_MACHINE}", "-c cleanall #{RPI_DEV_IMAGE}")
     end
 end
