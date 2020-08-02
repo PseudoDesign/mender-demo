@@ -92,7 +92,8 @@ namespace :rpi do
 
     desc "Build the #{RPI4_MACHINE} debug image: #{RPI_DEV_IMAGE}"
     task :build_rpi4_dev => [:docker] do
-        do_build(RPI, "#{RPI4_MACHINE}", RPI_DEV_IMAGE)
+        mender_artifact_name = ENV.fetch('MENDER_ARTIFACT_NAME',`echo "pseudodesign-dev-$(uname -n)-$(date +'%Y%m%d-%H%M%S')"`.strip)
+        do_build(RPI, "#{RPI4_MACHINE}", "MENDER_ARTIFACT_NAME='#{mender_artifact_name}' #{RPI_DEV_IMAGE}")
     end
 
     desc "Cleans the #{RPI4_MACHINE} debug image: #{RPI_DEV_IMAGE}"
