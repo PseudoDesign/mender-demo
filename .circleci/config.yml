@@ -12,12 +12,6 @@ jobs:
       - run: 
           name: Build Docker Image
           command: rake docker
-      - run:
-          name: Push Docker Image
-          command: |
-            source env.txt
-            docker image tag "$DOCKER_IMAGE_NAME" "pseudodesign/mender-demo-circleci:<< pipeline.number >>"
-            docker push "pseudodesign/mender-demo-circleci:<< pipeline.number >>"
   debug_qemu_build: 
     docker: 
       - image: pseudodesign/mender-demo-circleci:<< pipeline.number >>
@@ -34,8 +28,8 @@ jobs:
             source sources/poky/oe-init-build-env debug-build
             MACHINE=qemux86-64 bitbake core-image-minimal
   rpi4_dev_build: 
-    docker: 
-      - image: pseudodesign/mender-demo-circleci:<< pipeline.number >>
+    machine:
+      docker_layer_caching: true
     resource_class: xlarge
     steps: 
       - checkout 
@@ -45,9 +39,8 @@ jobs:
       - run: 
           name: Build core-image-minimal for raspberrypi4-64
           command: |
-            export BITBAKEDIR=sources/poky/bitbake
-            source sources/poky/oe-init-build-env rpi-build
-            MACHINE=raspberrypi4-64 MENDER_ARTIFACT_NAME=dev-circleci-<< pipeline.number >> bitbake pseudodesign-dev-image
+            export MENDER_ARTIFACT_NAME=pseudodesign-dev-circleci-<< pipeline.number >> 
+            rake rpi:build_rpi4_dev
       - store_artifacts:
           path: rpi-build/tmp/deploy
 
