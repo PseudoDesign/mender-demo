@@ -47,7 +47,7 @@ end
 
 desc "Build the Dockerfile as #{PROJECT_NAME}-build:latest"
 task :docker do
-    sh "docker build -t #{PROJECT_NAME}-build:latest #{ROOT_DIRECTORY}/docker"
+    sh "docker build -t MY_UID=$UID #{PROJECT_NAME}-build:latest #{ROOT_DIRECTORY}/docker"
 end
 
 desc "Run a shell in the Docker container at #{PROJECT_NAME}-build:latest with the appropriate project volumes mounted"
@@ -93,7 +93,7 @@ namespace :rpi do
     desc "Build the #{RPI4_MACHINE} debug image: #{RPI_DEV_IMAGE}"
     task :build_rpi4_dev => [:docker] do
         mender_artifact_name = ENV.fetch('MENDER_ARTIFACT_NAME',`echo "pseudodesign-dev-$(uname -n)-$(date +'%Y%m%d-%H%M%S')"`.strip)
-        do_build(RPI, "#{RPI4_MACHINE}", "MENDER_ARTIFACT_NAME='#{mender_artifact_name}' #{RPI_DEV_IMAGE}")
+        do_build(RPI, "#{RPI4_MACHINE}", "export MENDER_ARTIFACT_NAME='#{mender_artifact_name}'; #{RPI_DEV_IMAGE}")
     end
 
     desc "Cleans the #{RPI4_MACHINE} debug image: #{RPI_DEV_IMAGE}"
