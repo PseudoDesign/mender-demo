@@ -12,6 +12,7 @@ deploy
 !*build/conf/local.conf
 *build/conf/sanity_info
 *build/conf/priv-local.conf
+*build/conf/.*
 */*.log
 *.log
 *.img
