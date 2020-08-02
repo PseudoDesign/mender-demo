@@ -36,10 +36,14 @@ jobs:
       - run:
           name: Checkout Submodules
           command: git submodule update --init --recursive
+      - run:
+          name: Append Runtime Variables In local.conf
+          command: |
+            echo "MENDER_ARTIFACT_NAME=dev-circleci-<< pipeline.number >> " >> rpi-build/conf/local.conf
       - run: 
           name: Build core-image-minimal for raspberrypi4-64
           command: |
-            MENDER_ARTIFACT_NAME=dev-circleci-<< pipeline.number >> rake rpi:build_rpi4_dev
+            rake rpi:build_rpi4_dev
       - store_artifacts:
           path: rpi-build/tmp/deploy
 
