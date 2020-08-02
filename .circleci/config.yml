@@ -39,7 +39,7 @@ jobs:
       - run: 
           name: Build core-image-minimal for raspberrypi4-64
           command: |
-            MACHINE=raspberrypi4-64 MENDER_ARTIFACT_NAME=dev-circleci-<< pipeline.number >> rake rpi:build_rpi4_dev
+            MENDER_ARTIFACT_NAME=dev-circleci-<< pipeline.number >> rake rpi:build_rpi4_dev
       - store_artifacts:
           path: rpi-build/tmp/deploy
 
