@@ -38,16 +38,20 @@ def init_build(build_name)
     docker_run_command(source_command(build_name))
 end
 
-def do_build(build_name, machine_name, bitbake_command)
+def do_build(build_name, machine_name, bitbake_command, mender_artifact_name="")
     # Use a secondary "priv-local" file for variables not checked in to the repo
     priv_local_file = "#{build_name}-build/conf/priv-local.conf"
-    `touch "#{priv_local_file}"`
-    docker_run_command("#{source_command(build_name)}; MACHINE=#{machine_name} bitbake --postread='/app/oe/#{priv_local_file}' #{bitbake_command}")
+    `touch #{priv_local_file}`
+    # Pass that to the system via the extras file
+    extras_file = "#{build_name}-build/conf/.extras.conf"
+    `cp '#{priv_local_file}' '#{extras_file}'`
+    `echo "\nMENDER_ARTIFACT_NAME = '#{mender_artifact_name}'" >> '#{extras_file}'`
+    docker_run_command("#{source_command(build_name)}; MACHINE=#{machine_name} bitbake --postread='/app/oe/#{extras_file}' #{bitbake_command}")
 end
 
 desc "Build the Dockerfile as #{PROJECT_NAME}-build:latest"
 task :docker do
-    sh "docker build -t #{PROJECT_NAME}-build:latest #{ROOT_DIRECTORY}/docker"
+    sh "docker build --build-arg my_uid=$(id -u) -t #{PROJECT_NAME}-build:latest #{ROOT_DIRECTORY}/docker"
 end
 
 desc "Run a shell in the Docker container at #{PROJECT_NAME}-build:latest with the appropriate project volumes mounted"
@@ -93,7 +97,7 @@ namespace :rpi do
     desc "Build the #{RPI4_MACHINE} debug image: #{RPI_DEV_IMAGE}"
     task :build_rpi4_dev => [:docker] do
         mender_artifact_name = ENV.fetch('MENDER_ARTIFACT_NAME',`echo "pseudodesign-dev-$(uname -n)-$(date +'%Y%m%d-%H%M%S')"`.strip)
-        do_build(RPI, "#{RPI4_MACHINE}", "MENDER_ARTIFACT_NAME='#{mender_artifact_name}' #{RPI_DEV_IMAGE}")
+        do_build(RPI, "#{RPI4_MACHINE}", "#{RPI_DEV_IMAGE}", mender_artifact_name)
     end
 
     desc "Cleans the #{RPI4_MACHINE} debug image: #{RPI_DEV_IMAGE}"
