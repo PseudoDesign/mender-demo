@@ -48,6 +48,8 @@ jobs:
             export BITBAKEDIR=sources/poky/bitbake
             source sources/poky/oe-init-build-env rpi-build
             MACHINE=raspberrypi4-64 MENDER_ARTIFACT_NAME=dev-circleci-<< pipeline.number >> bitbake pseudodesign-dev-image
+      - store_artifacts:
+          path: rpi-build/tmp/deploy
 
 workflows:
   version: 2
