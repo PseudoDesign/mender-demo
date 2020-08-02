@@ -33,20 +33,37 @@ jobs:
             export BITBAKEDIR=sources/poky/bitbake
             source sources/poky/oe-init-build-env debug-build
             MACHINE=qemux86-64 bitbake core-image-minimal
+  rpi4_dev_build: 
+    docker: 
+      - image: pseudodesign/mender-demo-circleci:<< pipeline.number >>
+    resource_class: xlarge
+    steps: 
+      - checkout 
+      - run:
+          name: Checkout Submodules
+          command: git submodule update --init --recursive
+      - run: 
+          name: Build core-image-minimal for raspberrypi4-64
+          command: |
+            export BITBAKEDIR=sources/poky/bitbake
+            source sources/poky/oe-init-build-env rpi-build
+            MACHINE=raspberrypi4-64 MENDER_ARTIFACT_NAME=dev-circleci-<< pipeline.number >> bitbake pseudodesign-dev-image
+      - store_artifacts:
+          path: rpi-build/tmp/deploy
 
 workflows:
   version: 2
-  debug-qemu-build:
+  dev-build:
     jobs:
       - docker_image_build:
           filters:
             branches:
               only: 
                 - master
-      - debug_qemu_build:
+      - rpi4_dev_build:
           requires:
             - docker_image_build
           filters:
             branches:
-              only: 
+              only:
                 - master

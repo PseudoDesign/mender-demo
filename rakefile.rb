@@ -39,7 +39,10 @@ def init_build(build_name)
 end
 
 def do_build(build_name, machine_name, bitbake_command)
-    docker_run_command("#{source_command(build_name)}; MACHINE=#{machine_name} bitbake #{bitbake_command}")
+    # Use a secondary "priv-local" file for variables not checked in to the repo
+    priv_local_file = "#{build_name}-build/conf/priv-local.conf"
+    `touch "#{priv_local_file}"`
+    docker_run_command("#{source_command(build_name)}; MACHINE=#{machine_name} bitbake --postread='/app/oe/#{priv_local_file}' #{bitbake_command}")
 end
 
 desc "Build the Dockerfile as #{PROJECT_NAME}-build:latest"
@@ -54,20 +57,21 @@ end
 
 namespace :debug do
     DEBUG = "debug"
-    DEBUG_MACHINE = "qemux86-64"
+    QEMU_MACHINE = "qemux86-64"
+
     desc "Initialize the #{DEBUG}-build directory (if it doesn't already exist)"
     task :init => [:docker] do
         init_build(DEBUG)
     end
 
-    desc "Build the #{DEBUG_MACHINE} debug image"
+    desc "Build the #{QEMU_MACHINE} debug image"
     task :build_qemu => [:docker] do
-        do_build(DEBUG, "#{DEBUG_MACHINE}", "core-image-minimal")
+        do_build(DEBUG, "#{QEMU_MACHINE}", "core-image-minimal")
     end
 
-    desc "Run the #{DEBUG_MACHINE} debug image"
+    desc "Run the #{QEMU_MACHINE} debug image"
     task :run_qemu => [:docker] do
-        docker_run_command("#{source_command("debug")}; MACHINE=#{DEBUG_MACHINE} ../sources/meta-mender/meta-mender-qemu/scripts/mender-qemu core-image-minimal")
+        docker_run_command("#{source_command("debug")}; MACHINE=#{QEMU_MACHINE} ../sources/meta-mender/meta-mender-qemu/scripts/mender-qemu core-image-minimal")
     end
 
     desc "Run bitbake 'bitbake_command' targeting 'machine'"
@@ -76,10 +80,23 @@ namespace :debug do
     end
 end
 
-namespace :release do
-    RELEASE = "release"
-    desc "Initialize the #{RELEASE}-build directory (if it doesn't already exist)"
-    task :init, [:docker] do
-        init_build(RELEASE)
+namespace :rpi do
+    RPI = "rpi"
+    RPI4_MACHINE = "raspberrypi4-64"
+    RPI_DEV_IMAGE = "pseudodesign-dev-image"
+
+    desc "Initialize the #{RPI}-build directory (if it doesn't already exist)"
+    task :init => [:docker] do
+        init_build(RPI)
+    end
+
+    desc "Build the #{RPI4_MACHINE} debug image: #{RPI_DEV_IMAGE}"
+    task :build_rpi4_dev => [:docker] do
+        do_build(RPI, "#{RPI4_MACHINE}", RPI_DEV_IMAGE)
+    end
+
+    desc "Cleans the #{RPI4_MACHINE} debug image: #{RPI_DEV_IMAGE}"
+    task :clean_rpi4_dev => [:docker] do
+        do_build(RPI, "#{RPI4_MACHINE}", "-c cleanall #{RPI_DEV_IMAGE}")
     end
 end

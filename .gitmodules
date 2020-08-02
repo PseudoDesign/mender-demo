@@ -7,3 +7,10 @@
 [submodule "sources/meta-mender"]
 	path = sources/meta-mender
 	url = git@github.com:mendersoftware/meta-mender.git
+[submodule "sources/meta-raspberrypi"]
+	path = sources/meta-raspberrypi
+	url = git@github.com:agherzan/meta-raspberrypi.git
+	branch = warrior
+[submodule "sources/meta-pseudodesign"]
+	path = sources/meta-pseudodesign
+	url = git@github.com:PseudoDesign/meta-pseudodesign.git
