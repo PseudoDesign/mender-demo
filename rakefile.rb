@@ -47,7 +47,7 @@ end
 
 desc "Build the Dockerfile as #{PROJECT_NAME}-build:latest"
 task :docker do
-    sh "docker build -t MY_UID=$UID #{PROJECT_NAME}-build:latest #{ROOT_DIRECTORY}/docker"
+    sh "docker build --build-arg my_uid=$(id -u) -t #{PROJECT_NAME}-build:latest #{ROOT_DIRECTORY}/docker"
 end
 
 desc "Run a shell in the Docker container at #{PROJECT_NAME}-build:latest with the appropriate project volumes mounted"

@@ -21,7 +21,8 @@ RUN apt-get install -y apt-utils
 ADD packages.txt /app
 
 # Create the non-root user
-RUN useradd -u $MY_UID $USERNAME
+ARG my_uid
+RUN useradd -u $my_uid $USERNAME
 RUN mkdir -p /home/$USERNAME
 RUN cp /etc/skel/.bashrc /home/$USERNAME/.
 
