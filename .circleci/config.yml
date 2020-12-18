@@ -46,7 +46,11 @@ jobs:
             export MENDER_ARTIFACT_NAME=pseudodesign-dev-circleci-<< pipeline.number >> 
             rake rpi:build_rpi4_dev
       - store_artifacts:
-          path: rpi-build/tmp/deploy
+          path: rpi-build/tmp/deploy/images/rasperrypi4-64/*raspberrypi4-64.mender
+      - store_artifacts:
+          path: rpi-build/tmp/deploy/images/rasperrypi4-64/*raspberrypi4-64.sdimg.bz2
+      - store_artifacts:
+          path: rpi-build/tmp/deploy/licenses
       - save_cache:
           key: rpi4-dev-sstate-cache-{{ .Branch }}
           paths:
