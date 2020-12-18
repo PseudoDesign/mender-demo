@@ -33,6 +33,10 @@ jobs:
     resource_class: xlarge
     steps: 
       - checkout 
+      - restore_cache:
+          keys:
+            - rpi4-dev-sstate-cache-{{ .Branch }}
+            - rpi4-dev-sstate-cache
       - run:
           name: Checkout Submodules
           command: git submodule update --init --recursive
@@ -43,6 +47,11 @@ jobs:
             rake rpi:build_rpi4_dev
       - store_artifacts:
           path: rpi-build/tmp/deploy
+      - save_cache:
+          key: rpi4-dev-sstate-cache-{{ .Branch }}
+          paths:
+            - rpi-build/sstate-cache
+
 
 workflows:
   version: 2
