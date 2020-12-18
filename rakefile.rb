@@ -94,6 +94,11 @@ namespace :rpi do
         init_build(RPI)
     end
 
+    desc "Run bitbake 'bitbake_command'"
+    task :bitbake, [:cmd] => [:docker] do |t, args|
+        do_build(RPI, RPI4_MACHINE, args[:cmd])
+    end
+
     desc "Build the #{RPI4_MACHINE} debug image: #{RPI_DEV_IMAGE}"
     task :build_rpi4_dev => [:docker] do
         mender_artifact_name = ENV.fetch('MENDER_ARTIFACT_NAME',`echo "pseudodesign-dev-$(uname -n)-$(date +'%Y%m%d-%H%M%S')"`.strip)
