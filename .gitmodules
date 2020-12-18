@@ -14,3 +14,6 @@
 [submodule "sources/meta-pseudodesign"]
 	path = sources/meta-pseudodesign
 	url = git@github.com:PseudoDesign/meta-pseudodesign.git
+[submodule "sources/meta-openembedded"]
+	path = sources/meta-openembedded
+	url = git@github.com:openembedded/meta-openembedded.git
