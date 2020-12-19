@@ -41,18 +41,16 @@ jobs:
           name: Checkout Submodules
           command: git submodule update --init --recursive
       - run: 
-          name: Build core-image-minimal for raspberrypi4-64
+          name: Build pesudodesign-dev-image for raspberrypi4-64
           command: |
             export MENDER_ARTIFACT_NAME=pseudodesign-dev-circleci-<< pipeline.number >> 
             rake rpi:build_rpi4_dev
       - store_artifacts:
-          path: rpi-build/tmp/deploy/images/rasperrypi4-64/*raspberrypi4-64.mender
+          path: rpi-build/tmp/deploy/images/rasperrypi4-64/pseudodesign-dev-image-raspberrypi4-64.mender
       - store_artifacts:
-          path: rpi-build/tmp/deploy/images/rasperrypi4-64/*raspberrypi4-64.sdimg.bz2
-      - store_artifacts:
-          path: rpi-build/tmp/deploy/licenses
+          path: rpi-build/tmp/deploy/images/rasperrypi4-64/pseudodesign-dev-image-raspberrypi4-64.sdimg.bz2
       - save_cache:
-          key: rpi4-dev-sstate-cache-{{ .Branch }}
+          key: rpi4-dev-sstate-cache-{{ .Branch }}-{{ .BuildNum }}
           paths:
             - rpi-build/sstate-cache
 
